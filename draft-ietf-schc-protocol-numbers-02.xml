@@ -1,0 +1,395 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<?rfc toc="yes" ?>
+<?rfc symrefs="yes" ?>
+<?rfc sortrefs="yes"?>
+<?rfc compact="yes" ?>
+<?rfc subcompact="no" ?>
+<?rfc iprnotified="no" ?>
+<?rfc strict="no" ?>
+<rfc xmlns:xi="http://www.w3.org/2001/XInclude" consensus="true" docName="draft-ietf-schc-protocol-numbers-02"
+	category="std" ipr="trust200902" obsoletes="" submissionType="IETF"
+	xml:lang="en" tocInclude="true" symRefs="true" sortRefs="true" version="3">
+
+<front> <title abbrev="Protocol Numbers for SCHC">Protocol Numbers for SCHC</title>
+    <seriesInfo name="Internet-Draft" value="draft-ietf-schc-protocol-numbers-02"/>
+	<author fullname="Robert Moskowitz" initials="R" surname="Moskowitz" role='editor'>
+    <organization>HTT Consulting</organization>
+    <address>
+      <postal> 
+	    <street></street>
+        <city>Oak Park</city>
+        <region>MI</region>
+        <code>48237</code>
+        <country>USA</country>
+      </postal>
+      <email>rgm@labs.htt-consult.com</email>
+	</address>
+	</author>
+	<author initials='P' surname='Thubert' fullname='Pascal Thubert' >
+      <address>
+         <postal>
+            <city>Roquefort-les-Pins</city>
+            <code>06330</code>
+          <country>France</country>
+         </postal>
+         <email>pascal.thubert@gmail.com</email>
+      </address>
+   </author>
+    <author fullname="Carles Gomez" initials="C." surname="Gomez">
+      <organization>UPC</organization>
+      <address>
+        <postal>
+          <street>C/Esteve Terradas, 7</street>
+          <city>Castelldefels</city>
+          <region/>
+          <code>08860</code>
+          <country>Spain</country>
+        </postal>
+        <email>carles.gomez@upc.edu</email>
+      </address>
+    </author>
+<date year="2025" />
+   <area>Internet</area>
+   <workgroup>INTAREA</workgroup>
+    <keyword>RFC</keyword>
+     <keyword>Request for Comments</keyword>
+     <keyword>I-D</keyword>
+     <keyword>Internet-Draft</keyword>
+     <keyword>SCHC</keyword>
+<abstract>
+<t>
+	This document requests an Internet Protocol Number, and an 
+	Ethertype assignment for SCHC. The Internet Protocol Number request 
+	is so that SCHC can be used for IP independent SCHC of other 
+	transports such as UDP and ESP.  The Ethertype is to support 
+	generic use of native SCHC over any IEEE 802 technology for IP and 
+	non-IP protocols.
+</t>
+</abstract>
+</front>
+<middle>   
+<section numbered="true" toc="default"> <name>Introduction</name>
+<t> 
+	The Static Context Header Compression (SCHC) <xref 
+	target="I-D.ietf-schc-architecture" format="default"> 
+	Architecture</xref> originally envisioned SCHC used at the Network 
+	layer to enable IPv6 over selected Low-Power Wide Area Networking 
+	(LPWAN) radio technologies, encompassing IP and Transport, by the 
+	network provider. Then SCHC would be used by the application; this 
+	would include any security envelope.
+</t>
+<t>
+	This approach brakes down when dealing with Diet ESP <xref 
+	target="I-D.ietf-ipsecme-diet-esp" format="default"/>.  When Next 
+	Header is ESP, it is challenging for the ESP process to determine 
+	if an incoming ESP payload is regular ESP <xref target="RFC4303"/> 
+	or a diet ESP payload.  Careful allocation of the incoming SPI 
+	<xref target="I-D.ietf-ipsecme-ikev2-diet-esp-extension" 
+	format="default"/> can mitigate this and have an implicit SCHC 
+	header, but it is not sound protocol design.  If the Next Header in 
+	the IP header were SCHC, not ESP, a clear segregation of incoming 
+	traffic is directly supportable.
+</t>
+<t>
+	Additionally, SCHC can then be the Next Header within the ESP 
+	header with 'regular' SCHC rules for processing this content.  This 
+	approach will greatly simplify <xref 
+	target="I-D.ietf-ipsecme-diet-esp" format="default"/>.
+</t>
+<t>
+	DTLS 1.3 <xref target="RFC9147"/> adds further complications.  DTLS 
+	1.3 headers themselves are typically already very compressed and 
+	SCHC would not provide much value.  But the UDP header in front of 
+	DTLS would benefit of a separate compression from the IP Header 
+	compression.  Where it is possible with ESP's SPI to mitigate 
+	inbound packet processing challenges implicit SCHC would generate, 
+	DTLS header does not safely even provide this and a SCHC IP number 
+	is necessary to separate traffic.
+</t>
+<t>
+    New IETF work has started with the SCHC WG that is chartered to:
+</t>
+<blockquote>
+	provide specifications for the application of SCHC over underlying 
+	layers, where underlying layers include but are not limited to UDP 
+	tunnels, IP, PPP, and Ethernet, as well as the use of SCHC by 
+	upper-layer protocols.
+</blockquote>
+<t>
+	To achieve its charter, the SCHC working group needs the 
+	allocations that are requested in this document.
+</t>
+<t>
+	These issues carry over to IP Header compression if SCHC were 
+	available as an Ethertype (for 802 networking) and if SCHC were 
+	available as a TCP/UDP port number (for firewall traversal 
+	challenges).  At each layer, SCHC solves a problem that protocol 
+	designers, using constrained networks, currently have to design 
+	around.
+</t>
+<section anchor="IPn_Use_case" numbered="true" toc="default"> <name>Basic use case for SCHC as an Internet Protocol Number</name>
+<t>
+	A mobile node, or network, may use different links over a period of 
+	time.  In some cases the node has the multiple interfaces and, in 
+	theory, could tune the compression to each interface.  In other 
+	cases, it is the whole network that is mobile and individual nodes 
+	have no "knowledge" of which link with what characteristics is 
+	actively handling the traffic.  In either case, the node 
+	administrator is aware that some links are constrained and use of 
+	SCHC compression is highly recommended.
+</t>
+<t> 
+	One example is an UA that uses different links over the duration of 
+	an operation (i.e. flight).
+</t>
+	<ul spacing="normal">
+		<li>
+			Operation starts using Veriport's WiFi service.
+		</li>
+		<li>
+			On gaining altitude, UA transitions to a Cellular service.
+		</li>
+		<li>
+			On gaining more altitude, UA transitions to a constrained 
+			700MHz UHF service.
+		</li>
+		<li>
+			On approach to destination vertiport, link transition is
+			reversed.
+		</li>
+	</ul>
+<t> 
+	The UA could use SCHC compression only on the UHF link, but this 
+	may complicate the implementation.
+</t>
+<t> 
+	A more complex example is an Unmanned Cargo Aircraft that has 
+	multiple avionics systems, all Ethernet connected to an onboard 
+	router that has the multiple interfaces.  Here the nodes each 
+	manage their own secure path to their ground-based server, but have 
+	no knowledge of which link is in use to intelligently use 
+	compression.
+</t>
+</section>
+<section anchor="Etht_Use_case" numbered="true" toc="default"> <name>Basic use case for SCHC as an Ethertype</name>
+<t>
+	In the case of a classical LPWAN link such as LoRa <xref 
+	target="RFC9011"/>, the use of SCHC to compress the transported 
+	protocol, as well as the SCHC session (called instance) to use, are 
+	implicit. The MAC-Layer endpoints are preconfigured so there can be 
+	only one session, and there can be only SCHC. When extended to 
+	Ethernet and more powerful endpoint, this model is way too 
+	restrictive, and it is necessary to signal both the use of SCHC and 
+	the SCHC session to be used. While the SCHC WG is charterd to 
+	produce the latter, the Ethertype defined in this document will be 
+	used to signal SCHC as the upper* layer protocol.
+</t>
+<t> 
+	As an example that will leverage this, Aircraft-to-anything (A2X) <xref 
+	target="I-D.moskowitz-drip-a2x-adhoc-session" format="default"/> 
+	and Aircraft-to-Ground <xref 
+	target="I-D.moskowitz-drip-efficient-a2g-comm" format="default"/> 
+	protocols are specific cases that can benefit from SCHC as an 
+	Ethertype.  These can use IEEE 802 wireless technology and lessen 
+	spectrum contention in high traffic or long-range situations by 
+	minimizing the datagram size via SCHC.
+</t>
+<t> 
+	In the above uses, SCHC compresses the IPv6 header completely (all 
+	40 bytes), leaving only destination address (32 bytes, source 
+	address calcuated from content), or only 8 bytes (needs both 
+	addresses) at the cost of the 1-byte SCHC RuleID.  The 2-byte 
+	payload length may be needed in some cases (as in <xref 
+	target="SCHC_Ethtyp" format="default"/>).
+</t>
+<t> 
+	Since the whole point of SCHC is to reduce payload size, SCHC 
+	directly over an 802 technology cannot be addressed via the 
+	Ethernet Protocol Assignment under the IANA OUI.  A distinct 
+	Ethertype is needed by SCHC to actually reduce payload overhead.
+</t>
+</section>
+<!--	<section anchor="udp_Use_case" numbered="true" toc="default"> <name>Basic use case for SCHC as a UDP port number</name>
+<t> 
+	TBD
+</t>
+</section> -->
+</section>
+<section anchor="terms" numbered="true" toc="default"> <name>Terms and Definitions</name>
+<section numbered="true" toc="default"> <name>Requirements Terminology</name>
+	<t>
+		The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL 
+		NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", 
+		"MAY", and "OPTIONAL" in this document are to be interpreted as 
+		described in BCP 14 <xref target="RFC2119" /> <xref 
+		target="RFC8174" /> when, and only when, they appear in all 
+		capitals, as shown here.
+	</t>
+</section>
+</section>
+<section anchor="SCHC_NH" numbered="true" toc="default"> <name>Internet Protocol Number for SCHC</name>
+<t>
+	SCHC as the IP payload SHOULD be indicated in the IPv4 "Protocol" 
+	field or the IPv6 "Next Header" field with a value of TBD1 
+	(recommended: 145) as shown below:
+</t>
+<table anchor="IPN_table" align="center"> <name>Internet Protocol Numbers</name>
+	<thead>
+		<tr>
+			<th align="right">Decimal</th>
+			<th align="left">Keyword</th>
+			<th align="left">Protocol</th>
+			<th align="left">IPv6 Extension Header</th>
+			<th align="left">Reference</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td align="right">TBD1 (145)</td>
+			<td align="left">SCHC</td>
+			<td align="left">Static Context Header Compression</td>
+			<td align="left"> </td>
+			<td align="left">This RFC</td>
+		</tr>
+	</tbody>
+</table>
+<t>
+	The SCHC compressed header with payload is shown below.  The size 
+	of the SCHC RuleID is variable as described in <xref 
+	target="RFC8724"/>.  An implementation should have a table of 
+	source IP address and RuleID size.  The addresses should be 
+	represented in prefix format to allow for groups of addresses 
+	having the same RuleID size.
+</t>
+<figure anchor="SCHC_Packet"> <name>SCHC Packet</name>
+<artwork name="" type="ascii-art" align="left" alt="">
+<![CDATA[
+    |------- Compressed Header -------|
+    +---------------------------------+--------------------+ 
+    |  RuleID  |  Compression Residue |      Payload       |
+    +---------------------------------+--------------------+
+]]>
+</artwork>
+</figure>
+<t>
+	The RuleID may be statically configured per <xref 
+	target="RFC8724"/>, or may be negotiated within a protocol as in 
+	IKE <xref target="I-D.ietf-ipsecme-ikev2-diet-esp-extension" 
+	format="default"/>.
+</t>
+</section>
+<section anchor="SCHC_Ethtyp" numbered="true" toc="default"> <name>Ethertype for SCHC</name>
+<t> 
+	The use of SCHC as an Ethertype is similar to that as in <xref 
+	target="SCHC_NH" format="default"/>, above.  Immediately after the 
+	SCHC Ethertype is the RuleID as in <xref target="SCHC_Packet" 
+	format="default"/>.  If the rules for the RuleID does not provide 
+	the datagram length, the datagram length MUST be explicit in the 
+	Compression Residue, as the 802 header may not provide the needed 
+	length information to properly process the datagram.
+</t>
+</section>
+<section anchor="IANA" numbered="true" toc="default"> <name>IANA Considerations</name>
+<section anchor="IANA_IPN_reg" numbered="true" toc="default"> <name>IANA Internet Protocol Number Registry Update</name>
+<t>
+	  This document requests IANA to make the following change to the 
+	  "Assigned Internet Protocol Numbers" <xref 
+	  target="IANA-IPN" format="default"/> registry:
+</t>
+	<dl newline="true">
+        <dt>Internet Protocol Number:</dt>
+        <dd>
+			This document defines the new Internet Protocol Number 
+			value TBD1 (suggested: 145) (<xref target="SCHC_NH" 
+			format="default"/>) in the "Assigned Internet Protocol 
+			Numbers" registry.
+        </dd>
+	</dl>
+<table>
+	<thead>
+		<tr>
+			<th align="right">Decimal</th>
+			<th align="left">Keyword</th>
+			<th align="left">Protocol</th>
+			<th align="left">IPv6 Extension Header</th>
+			<th align="left">Reference</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td align="right">TBD1 (145)</td>
+			<td align="left">SCHC</td>
+			<td align="left">Static Context Header Compression</td>
+			<td align="left"> </td>
+			<td align="left">This RFC</td>
+		</tr>
+	</tbody>
+</table>
+</section>
+<section anchor="IANA_Ethtyp_req" numbered="true" toc="default"><name>IANA Ethertype Request</name>
+<t>
+	IANA is requested using the process in <xref 
+	target="I-D.ietf-intarea-rfc7042bis" section="5.5" format="default"/>, 
+	to request the Ethertype for SCHC.
+</t>
+</section>
+<section anchor="IANA_Ethtyp_SCHC_reg" numbered="true" toc="default"><name>IANA SCHC Ethertype Registry</name>
+<t>
+	A registry of SCHC RuleIDs for SCHC as an Ethertype may be needed. 
+	More discussion is needed to resolve this.  For example, split a 
+	1-byte RuleID in half.  The top half of 1-14 assigned to different 
+	domains of use, like for aviation.  A value of 15 designates that a 
+	2-byte RuleID is used.
+</t>
+</section>
+</section>
+<section anchor="security-considerations" numbered="true" toc="default"> <name>Security Considerations</name>
+<t>
+	TBD
+</t>
+</section>
+</middle>
+<back>
+<displayreference target="I-D.ietf-intarea-rfc7042bis" to="intarea-rfc7042bis"/>
+<displayreference target="I-D.ietf-schc-architecture" to="schc-architecture"/>
+<displayreference target="I-D.ietf-ipsecme-diet-esp" to="diet-esp"/>
+<displayreference target="I-D.ietf-ipsecme-ikev2-diet-esp-extension" to="ikev2-diet-esp"/>
+<displayreference target="I-D.moskowitz-drip-a2x-adhoc-session" to="drip-a2x-adhoc-session"/>
+<displayreference target="I-D.moskowitz-drip-efficient-a2g-comm" to="drip-efficient-a2g-comm"/>
+<references> <name>References</name>
+<references title="Normative References">
+	<xi:include href="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml"/>
+	<xi:include href="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.8174.xml"/>
+</references>
+<references title="Informative References">
+	<xi:include href="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.4303.xml"/>
+	<xi:include href="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.8724.xml"/>
+	<xi:include href="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.9011.xml"/>
+	<xi:include href="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.9147.xml"/>
+	<xi:include href="https://datatracker.ietf.org/doc/bibxml3/draft-ietf-intarea-rfc7042bis.xml"/>
+	<xi:include href="https://datatracker.ietf.org/doc/bibxml3/draft-ietf-schc-architecture.xml"/>
+	<xi:include href="https://datatracker.ietf.org/doc/bibxml3/draft-ietf-ipsecme-diet-esp.xml"/>
+	<xi:include href="https://datatracker.ietf.org/doc/bibxml3/draft-ietf-ipsecme-ikev2-diet-esp-extension.xml"/>
+	<xi:include href="https://datatracker.ietf.org/doc/bibxml3/draft-moskowitz-drip-a2x-adhoc-session.xml"/>
+	<xi:include href="https://datatracker.ietf.org/doc/bibxml3/draft-moskowitz-drip-efficient-a2g-comm.xml"/>
+	<reference anchor="IANA-IPN"  target="https://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml">
+		<front>
+			<title>Assigned Internet Protocol Numbers</title>
+			<author><organization>IANA</organization></author>
+		</front>
+	</reference>
+</references>
+</references>
+<section numbered="false" toc="default"> <name>Acknowledgments</name>
+<t>
+	Discussions with Pascal Thubert, lpwan co-chair, helped develop 
+	this approach of using SCHC E2E below the current Transport Layers.
+</t>
+<t>
+	Adam Wiethuechter and Stuart W. Card of AX Enterprize, LLC provided 
+	extensive input and review for use of SCHC for aviation air-to-air 
+	and air-to-ground communications.
+</t>
+</section>
+</back>
+</rfc>
