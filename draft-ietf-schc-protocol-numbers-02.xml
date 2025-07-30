@@ -48,6 +48,19 @@
         <email>carles.gomez@upc.edu</email>
       </address>
     </author>
+    <author fullname="Ana Minaburo" initials="A." surname="Minaburo">
+      <organization>Consultant</organization>
+      <address>
+        <postal>
+          <street>Rue de Rennes</street>
+          <city>Cesson-Sevigne</city>
+          <region/>
+          <code>35510</code>
+          <country>France</country>
+        </postal>
+        <email>anaminaburo@gmail.com</email>
+      </address>
+    </author>
 <date year="2025" />
    <area>Internet</area>
    <workgroup>INTAREA</workgroup>
@@ -95,6 +108,19 @@
 	header with 'regular' SCHC rules for processing this content.  This 
 	approach will greatly simplify <xref 
 	target="I-D.ietf-ipsecme-diet-esp" format="default"/>.
+</t>
+<t>
+	In the evolution of SCHC, compression and fragmentation are 
+	available at any layer. After applying SCHC, the protocol 
+	information is reduced to a RuleID and the compression residue (if 
+	any). We need to identify SCHC to recognise when a protocol header 
+	has been compressed by SCHC. 
+</t>
+<t>
+	The identifier to be used depends on the protocol/layer in the 
+	stack where SCHC is applied. It MUST be unambiguous to transform 
+	SCHC into an application. And this identifier could be a protocol 
+	number and port numbers.
 </t>
 <t>
 	DTLS 1.3 <xref target="RFC9147"/> adds further complications.  DTLS 
@@ -209,11 +235,38 @@
 	Ethertype is needed by SCHC to actually reduce payload overhead.
 </t>
 </section>
-<!--	<section anchor="udp_Use_case" numbered="true" toc="default"> <name>Basic use case for SCHC as a UDP port number</name>
-<t> 
-	TBD
+<section anchor="udp_Use_case" numbered="true" toc="default"> <name>Basic use case for SCHC as a UDP port</name>
+<t>
+	There is a need to allow carrying SCHC-compressed data units (i.e., 
+	SCHC datagrams [draft-ietf-schc-architecture]) atop UDP. For 
+	example, SCHC-based header compression for Constrained Application 
+	Protocol (CoAP) has been specified <xref target="RFC8824"/>. The 
+	document entitled 'Transmission of SCHC-compressed packets over 
+	IEEE 802.15.4 networks' <xref 
+	target="I-D.ietf-6lo-schc-15dot4" format="default"/> aims to 
+	exploit the opportunity of carrying SCHC-compressed CoAP messages 
+	on top of UDP. To support this functionality, there is a need for 
+	UDP port numbers known by both endpoints (sender and receiver) that 
+	identifies the presence of a SCHC Stratum atop UDP, i.e., that the 
+	UDP payload is a SCHC datagram (in this case, a SCHC-compressed 
+	CoAP message).
 </t>
-</section> -->
+<t>
+	In addition, note that it is possible to use traditional 6LoWPAN 
+	header compression <xref target="RFC6282"/> to compress IPv6 and 
+	UDP headers, but not to compress CoAP headers. Therefore, the only 
+	way to support CoAP header compression on devices running 6LoWPAN 
+	is by means of SCHC, which again requires to place a SCHC Stratum 
+	on top of UDP.
+</t>
+<t>
+	SCHC header compression is also being developed for further 
+	protocols carried by UDP (e.g., QUIC <xref 
+	target="I-D.sirohi-schc-quic-compression" format="default"/>). In 
+	the future, SCHC may be applied to any protocol at any layer, such 
+	as DTLS and TCP.
+</t>
+</section>
 </section>
 <section anchor="terms" numbered="true" toc="default"> <name>Terms and Definitions</name>
 <section numbered="true" toc="default"> <name>Requirements Terminology</name>
@@ -351,6 +404,8 @@
 </middle>
 <back>
 <displayreference target="I-D.ietf-intarea-rfc7042bis" to="intarea-rfc7042bis"/>
+<displayreference target="I-D.ietf-6lo-schc-15dot4" to="6lo-15dot4-schc"/>
+<displayreference target="I-D.sirohi-schc-quic-compression" to="schc-quic-compression"/>
 <displayreference target="I-D.ietf-schc-architecture" to="schc-architecture"/>
 <displayreference target="I-D.ietf-ipsecme-diet-esp" to="diet-esp"/>
 <displayreference target="I-D.ietf-ipsecme-ikev2-diet-esp-extension" to="ikev2-diet-esp"/>
@@ -363,11 +418,15 @@
 </references>
 <references title="Informative References">
 	<xi:include href="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.4303.xml"/>
+	<xi:include href="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.6282.xml"/>
 	<xi:include href="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.8724.xml"/>
+	<xi:include href="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.8824.xml"/>
 	<xi:include href="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.9011.xml"/>
 	<xi:include href="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.9147.xml"/>
 	<xi:include href="https://datatracker.ietf.org/doc/bibxml3/draft-ietf-intarea-rfc7042bis.xml"/>
+	<xi:include href="https://datatracker.ietf.org/doc/bibxml3/draft-ietf-6lo-schc-15dot4.xml"/>
 	<xi:include href="https://datatracker.ietf.org/doc/bibxml3/draft-ietf-schc-architecture.xml"/>
+	<xi:include href="https://datatracker.ietf.org/doc/bibxml3/draft-sirohi-schc-quic-compression.xml"/>
 	<xi:include href="https://datatracker.ietf.org/doc/bibxml3/draft-ietf-ipsecme-diet-esp.xml"/>
 	<xi:include href="https://datatracker.ietf.org/doc/bibxml3/draft-ietf-ipsecme-ikev2-diet-esp-extension.xml"/>
 	<xi:include href="https://datatracker.ietf.org/doc/bibxml3/draft-moskowitz-drip-a2x-adhoc-session.xml"/>
@@ -389,6 +448,13 @@
 	Adam Wiethuechter and Stuart W. Card of AX Enterprize, LLC provided 
 	extensive input and review for use of SCHC for aviation air-to-air 
 	and air-to-ground communications.
+</t>
+<t> 
+	Carles Gomez and Anna Calveras have been funded in part by 
+	MCIU/AEI/10.13039/501100011033/FEDER/UE through project 
+	PID2023-146378NB-I00, and by Secretaria d'Universitats i Recerca 
+	del Departament d'Empresa i Coneixement de la Generalitat de 
+	Catalunya with the grant number 2021 SGR 00330.
 </t>
 </section>
 </back>
