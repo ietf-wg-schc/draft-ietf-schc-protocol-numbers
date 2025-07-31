@@ -5,12 +5,12 @@
 INTAREA                                                R. Moskowitz, Ed.
 Internet-Draft                                            HTT Consulting
 Intended status: Standards Track                              P. Thubert
-Expires: 31 January 2026                                                
+Expires: 1 February 2026                                                
                                                                 C. Gomez
                                                                      UPC
                                                              A. Minaburo
                                                               Consultant
-                                                            30 July 2025
+                                                            31 July 2025
 
 
                        Protocol Numbers for SCHC
@@ -39,7 +39,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 31 January 2026.
+   This Internet-Draft will expire on 1 February 2026.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Moskowitz, et al.        Expires 31 January 2026                [Page 1]
+Moskowitz, et al.        Expires 1 February 2026                [Page 1]
 
 Internet-Draft          Protocol Numbers for SCHC              July 2025
 
@@ -93,6 +93,27 @@ Table of Contents
    network provider.  Then SCHC would be used by the application; this
    would include any security envelope.
 
+   In the evolution of SCHC, compression and fragmentation are available
+   at any layer.  After applying SCHC, the protocol information is
+   reduced to a RuleID and the compression residue (if any).  We need to
+   identify SCHC to recognise when a protocol header has been compressed
+   by SCHC.
+
+   The identifier to be used depends on the protocol/layer in the stack
+   where SCHC is applied.  It MUST be unambiguous to transform SCHC into
+   an application.  And this identifier could be a protocol number and
+   port numbers.
+
+
+
+
+
+
+Moskowitz, et al.        Expires 1 February 2026                [Page 2]
+
+Internet-Draft          Protocol Numbers for SCHC              July 2025
+
+
    This approach brakes down when dealing with Diet ESP [diet-esp].
    When Next Header is ESP, it is challenging for the ESP process to
    determine if an incoming ESP payload is regular ESP [RFC4303] or a
@@ -105,25 +126,6 @@ Table of Contents
    Additionally, SCHC can then be the Next Header within the ESP header
    with 'regular' SCHC rules for processing this content.  This approach
    will greatly simplify [diet-esp].
-
-
-
-
-Moskowitz, et al.        Expires 31 January 2026                [Page 2]
-
-Internet-Draft          Protocol Numbers for SCHC              July 2025
-
-
-   In the evolution of SCHC, compression and fragmentation are available
-   at any layer.  After applying SCHC, the protocol information is
-   reduced to a RuleID and the compression residue (if any).  We need to
-   identify SCHC to recognise when a protocol header has been compressed
-   by SCHC.
-
-   The identifier to be used depends on the protocol/layer in the stack
-   where SCHC is applied.  It MUST be unambiguous to transform SCHC into
-   an application.  And this identifier could be a protocol number and
-   port numbers.
 
    DTLS 1.3 [RFC9147] adds further complications.  DTLS 1.3 headers
    themselves are typically already very compressed and SCHC would not
@@ -146,10 +148,9 @@ Internet-Draft          Protocol Numbers for SCHC              July 2025
 
    These issues carry over to IP Header compression if SCHC were
    available as an Ethertype (for 802 networking) and if SCHC were
-   available as a TCP/UDP port number (for firewall traversal
-   challenges).  At each layer, SCHC solves a problem that protocol
-   designers, using constrained networks, currently have to design
-   around.
+   available as a TCP/UDP port number (for the application layer).  At
+   each layer, SCHC solves a problem that protocol designers, using
+   constrained networks, currently have to design around.
 
 1.1.  Basic use case for SCHC as an Internet Protocol Number
 
@@ -164,8 +165,7 @@ Internet-Draft          Protocol Numbers for SCHC              July 2025
 
 
 
-
-Moskowitz, et al.        Expires 31 January 2026                [Page 3]
+Moskowitz, et al.        Expires 1 February 2026                [Page 3]
 
 Internet-Draft          Protocol Numbers for SCHC              July 2025
 
@@ -221,7 +221,7 @@ Internet-Draft          Protocol Numbers for SCHC              July 2025
 
 
 
-Moskowitz, et al.        Expires 31 January 2026                [Page 4]
+Moskowitz, et al.        Expires 1 February 2026                [Page 4]
 
 Internet-Draft          Protocol Numbers for SCHC              July 2025
 
@@ -277,7 +277,7 @@ Internet-Draft          Protocol Numbers for SCHC              July 2025
 
 
 
-Moskowitz, et al.        Expires 31 January 2026                [Page 5]
+Moskowitz, et al.        Expires 1 February 2026                [Page 5]
 
 Internet-Draft          Protocol Numbers for SCHC              July 2025
 
@@ -333,7 +333,7 @@ Internet-Draft          Protocol Numbers for SCHC              July 2025
 
 
 
-Moskowitz, et al.        Expires 31 January 2026                [Page 6]
+Moskowitz, et al.        Expires 1 February 2026                [Page 6]
 
 Internet-Draft          Protocol Numbers for SCHC              July 2025
 
@@ -389,7 +389,7 @@ Internet-Draft          Protocol Numbers for SCHC              July 2025
 
 
 
-Moskowitz, et al.        Expires 31 January 2026                [Page 7]
+Moskowitz, et al.        Expires 1 February 2026                [Page 7]
 
 Internet-Draft          Protocol Numbers for SCHC              July 2025
 
@@ -445,7 +445,7 @@ Internet-Draft          Protocol Numbers for SCHC              July 2025
 
 
 
-Moskowitz, et al.        Expires 31 January 2026                [Page 8]
+Moskowitz, et al.        Expires 1 February 2026                [Page 8]
 
 Internet-Draft          Protocol Numbers for SCHC              July 2025
 
@@ -501,7 +501,7 @@ Internet-Draft          Protocol Numbers for SCHC              July 2025
 
 
 
-Moskowitz, et al.        Expires 31 January 2026                [Page 9]
+Moskowitz, et al.        Expires 1 February 2026                [Page 9]
 
 Internet-Draft          Protocol Numbers for SCHC              July 2025
 
@@ -515,7 +515,7 @@ Acknowledgments
    extensive input and review for use of SCHC for aviation air-to-air
    and air-to-ground communications.
 
-   Carles Gomez and Anna Calveras have been funded in part by
+   Carles Gomez has been funded in part by
    MCIU/AEI/10.13039/501100011033/FEDER/UE through project PID2023-
    146378NB-I00, and by Secretaria d'Universitats i Recerca del
    Departament d'Empresa i Coneixement de la Generalitat de Catalunya
@@ -557,4 +557,4 @@ Authors' Addresses
 
 
 
-Moskowitz, et al.        Expires 31 January 2026               [Page 10]
+Moskowitz, et al.        Expires 1 February 2026               [Page 10]
